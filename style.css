@@ -27,9 +27,22 @@ p {
 	line-height: 0px;
 }
 textarea {
+	border-color: #00e673;
+	background-color: #80ffbf;
 	font-size: 22px;
 	resize: none;
 	width: 100%;
+	border-radius: 5px;
+}
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  transform: scale(2);
+  padding: 10px;
 }
 
 .title0 {
@@ -43,50 +56,90 @@ textarea {
 	/*font-weight: bold;*/
 	font-size: 180px;
 	height: 200px;
-	px;
 }
 
 .btn {
-	/*height: 100px;*/
-	/*cursor: pointer;
-	padding: 5px 15px;
-	background: var(--light-color);
-	color: var(--dark-color-a);
-	border: 0;
-	font-size: 17px;*/
+	font-family: Rubik;
+	font-weight: bold;
+	font-size: 300px;
+	background: #00ff80;
+	border: none;
+	border-radius: 5px;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 24px;
+	margin: 0px 10px;
+	cursor: pointer;
+	box-shadow: 0 5px #00e673;
+	outline: none;
+}
+.btn:hover {
+	/*background-color: #00e673;*/
+}
+.btn:active {
+	box-shadow: 0 0px #00e673;
+	transform: translateY(5px);
 }
 
+
 .topdiv {
+  	margin: 0 auto;
 	text-align: left;
 	background-color: #14c4ff;
 	/*width:300px;*/
 	/*margin: auto;*/
-	border-radius: 8px;
+	border-radius: 15px;
 	padding-left: 5px;
 	padding-right: 5px;
+	max-width: 600px;
 	overflow: hidden
 }
 .playerdiv {
 	vertical-align: top;
     text-align: left;
     background: #14ff8a;
-    border-top: 500px;
     border-radius: 10px;
     overflow: hidden;
-} 
+}
+/*.liketextarea {
+	background-color: #80ffbf;
+	font-size: 22px;
+	border: 1px solid #00e673;
+	min-height: 60px;
+	overflow: auto; 
+	padding: 2px;
+	resize: both;
+	width: 400px;
+	font-size:15px;
+	resize: none;
+	width: 100%;
+	border-radius: 5px;
+}*/
 .padder {
-	padding-bottom: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 .spacer {
 	display:table-cell;
 	width:33%;
-	padding:10px;
+	padding: 5px;
+	padding-right: 10px;
 	text-align:justify; 
 	background: #4dffa6;
 }
-
+.approve {
+	position: relative;
+}
+.cb {
+	position: absolute;
+	bottom: 15px;
+	right: 5px;
+}
 .checkb {
 	margin-right: 10px;
+
 }
 .rules {
 }
