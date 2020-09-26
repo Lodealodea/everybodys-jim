@@ -20,13 +20,16 @@ h3 {
 }
 h4 {
 	padding-left: 10px;
-	line-height: -10%;
 }
 p {
+	font-weight: bold;
+	font-size: 22px;
 	line-height: 0px;
 }
 textarea {
+	font-size: 22px;
 	resize: none;
+	width: 100%;
 }
 
 .title0 {
@@ -45,19 +48,19 @@ textarea {
 
 .btn {
 	/*height: 100px;*/
-	cursor: pointer;
+	/*cursor: pointer;
 	padding: 5px 15px;
 	background: var(--light-color);
 	color: var(--dark-color-a);
 	border: 0;
-	font-size: 17px;
+	font-size: 17px;*/
 }
 
 .topdiv {
 	text-align: left;
 	background-color: #14c4ff;
-	width:400px;
-	margin: auto;
+	/*width:300px;*/
+	/*margin: auto;*/
 	border-radius: 8px;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -67,9 +70,13 @@ textarea {
 	vertical-align: top;
     text-align: left;
     background: #14ff8a;
+    border-top: 500px;
     border-radius: 10px;
     overflow: hidden;
 } 
+.padder {
+	padding-bottom: 10px;
+}
 .spacer {
 	display:table-cell;
 	width:33%;
