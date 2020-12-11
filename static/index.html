@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3"> -->
+
+	<link href="https://fonts.googleapis.com/css2?family=Secular+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="index.css"> -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+	<script src="/socket.io/socket.io.js"></script>
+
+	<script type="module">
+        import {page} from "./index.js";
+       let socket = io();
+
+        page(document.body, socket);
+	</script>
+
+	<title>Everybody's Jim</title>
+</head>
+<body style="background-color: #14ffff;">	
+    <a class="rules" href="rules.html" target="_blank">Rules</a>
+</body>
+</html>
