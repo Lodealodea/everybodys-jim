@@ -1,16 +1,31 @@
-import {StyleBtn, padder} from "./modules/addons.js";
+import {Bang, Floater, Padder} from "./modules/addons.js";
+import { Card } from "./modules/card.js";
 import {elem, style} from "./modules/core.js";
+import { DiceModal, RollDiceModal, SetDiceModal, VoteDiceModal } from "./modules/diceModals.js";
+import { Modal, MsgsModal, RequestModal } from "./modules/modals.js";
 import { personality } from "./modules/personality.js";
 import {storyteller} from "./modules/storyteller.js";
+import { summary } from "./modules/summary.js";
 
 export function page(parent, socket)
-{    
+{   
     let code = window.location.href.split('/')[3];
 
     document.body.style.userSelect = "none";
 
     let html = elem(parent);
     console.log(html);
+
+    // let bla = new RollDiceModal(html, 15, 5, true);
+    // bla.onRollBtnClick = ()=>{
+    //     socket.emit("roll button clicked");
+    // }
+    // socket.on("roll button clicked", (d20arr, d10arr)=>{
+    //     console.log("kkkk")
+    //     bla.rollDice(d20arr, d10arr);
+    // });
+
+    //RETURN EVERYTHING AFTER THAT
     style(html, `
     font-family: Rubik;
     font-weight: Bold;
@@ -33,7 +48,7 @@ export function page(parent, socket)
         position: relative;
         z-index: -1;
     `);
-    let p = padder(html, 40);
+    let p = Padder(html, 40);
 
     if (code == "") {
         socket.on("created room", (code) => {
@@ -54,4 +69,5 @@ export function page(parent, socket)
 
         socket.emit("join room", code);
     }
+    // summary(html);
 }

@@ -1,4 +1,4 @@
-import { container, padder } from "./addons.js";
+import { Bang, Container, Padder, StyleBtn2 } from "./addons.js";
 import { elem, style } from "./core.js";
 
 function Attribute(parent,
@@ -6,8 +6,10 @@ function Attribute(parent,
     this.onUpdated = null;
 
     let html = elem(parent);
-    style(html, `position: relative`);
+    style(html, `position: relative;`);
 
+
+    // checkbox / marker
     if (state == 0) {
         let checkbox = elem(html, "input");
         checkbox.type = "checkbox";
@@ -37,7 +39,8 @@ function Attribute(parent,
         marker.innerText = "•";
     }
 
-    if (!ability) {
+    //score textarea
+    if (!ability && state === 0) {
         let score = elem(html, "textarea");
         style(score, `
             position: absolute;
@@ -61,23 +64,29 @@ function Attribute(parent,
             overflow: hidden;
         `);
         score.maxLength = 2;
-        score.innerText = "0";
+        score.innerText = "1";
         score.disabled = !storyteller;
 
-        // score.oninput = ()=>this.onUpdated();
+        score.onkeypress = (e)=>{
+            var k = e.key;
+            if (!(k >= 0 && k <= 9))
+                e.preventDefault();
+        };
         score.onfocus = () => {score.value = "";};
         score.addEventListener("focusout", () => {
             if(!Number.isInteger(parseFloat(score.value)))
-                score.value = "0";
+                score.value = "1";
+            else if (parseInt(score.value) < 1)
+                score.value = "1";
             else if (parseInt(score.value) > 10)
                 score.value = "10";
 
             this.onUpdated();
         });
-
         this.score = score;
     }
 
+    //Textarea
     let textarea = elem(html, "textarea");
     style(textarea, `
         width: calc(100% - 60px);
@@ -96,6 +105,8 @@ function Attribute(parent,
 
         resize: none;
         overflow: hidden;
+
+        // background: blue;
     `);
     
     if (state == 0) {
@@ -109,25 +120,90 @@ function Attribute(parent,
             box-shadow: 0px 10px 10px -10px rgba(0, 0, 0, 0.19);
         `, "focus");
         
-        this.updateTextboxHeight = ()=>{
-            if (textarea.scrollHeight > 80) {
-                textarea.style.height = "0px";
-                textarea.style.height = (textarea.scrollHeight - 20)+"px";
-            }
-        };
-
         textarea.oninput = ()=>
         {
+            textarea.value = textarea.value.replaceAll("\n", "");
             this.onUpdated();
             this.updateTextboxHeight(); 
         };
     }
     else if (state == 1) {
         textarea.disabled = true;
+        textarea.style.color = "black";
     }
 
+    this.updateTextboxHeight = ()=>{
+        if (textarea.scrollHeight > 80) {
+            textarea.style.height = "0px";
+            textarea.style.height = (textarea.scrollHeight - 20)+"px";
+        }
+    };
+
     this.textarea = textarea;
+
+    //Score Button
+    if (!ability && state === 1)
+    {
+        let scoreVal = 0;
+        let scoreBtn = new StyleBtn2(html, `+${scoreVal}`, `pts`);
+        style(scoreBtn.html, `
+            position: absolute;
+            top: 40px;
+            left: -0px;
+        `);
+        style(scoreBtn.btn, `
+            max-width: 36px;
+            min-width: 36px;
+        `);
+        // transform: translate(0px, 1px);
+
+        this.getScoreVal = ()=>{return scoreVal;};
+        this.setScoreVal = (val)=>{
+            scoreVal = val;
+            scoreBtn.setText(`+${scoreVal}`, `pts`);
+            // if (val > 10) {
+            //     style(scoreBtn.)
+            // }
+        };
+
+        this.onScoreBtnClick = null;
+
+        scoreBtn.btn.onclick = ()=>{
+            this.onScoreBtnClick(scoreVal, textarea.value);
+        }
+
+        this.score = scoreBtn
+    }
+
+    if (!ability && state === 2)
+    {
+        let scoreVal = 0;
+        let scoreLabel = elem(html);
+        let d1 = elem(scoreLabel);
+        d1.innerText = scoreVal;
+        let d2 = elem(scoreLabel);
+        d2.innerText = "pts";
+        style(scoreLabel, `
+            position: absolute;
+            top: 40px;
+            left: -0px;
+            max-width: 36px;
+            min-width: 36px;
+        `);
+        this.setScoreVal = (val)=>{
+            scoreVal = val;
+            d1.innerText = val;
+        };
+    }
 }
+
+
+
+
+
+
+//------------------CARD-------------------
+
 
 export function Card(parent, storyteller, state) {
     this.onUpdated = null;
@@ -173,10 +249,13 @@ export function Card(parent, storyteller, state) {
     }
     this.name = name;
 
-    if(state == 1) {
-        let scoreLabel = elem(html);
+    let scoreVal = 0;
+    let scoreLabel = elem(html);
+    if(state === 1 || state === 2) {
         style(scoreLabel, `
             display: table-cell;
+            position: relative;
+            z-index: 0;
             width: 90px;
             min-width: 90px;
             padding: 0px 0px 0px 0px;
@@ -188,14 +267,35 @@ export function Card(parent, storyteller, state) {
             background-color: #00ff80;
             vertical-align: text-top;
             // box-shadow: 0px 10px 10px -10px rgba(0, 0, 0, 0.19);
-            box-shadow: -3px 2px 12px -2px rgba(1, 0, 0, 0.19);
+            box-shadow: -5px -6px 12px -6px rgba(1, 0, 0, 0.19);
+
+            cursor: pointer;
         `);
         style(scoreLabel, `
             // box-shadow: -0px 7px 9px -2px rgba(1, 0, 0, 0.19);
             box-shadow: -0px 0px 0px -0px rgba(1, 0, 0, 0.19);
-            transform: translate(0px, 1px)
+            transform: translate(0px, 1px);
         `, "active");
-        scoreLabel.innerText = "Score: 10";
+        scoreLabel.innerText = "Score: 0";
+
+        this.bang = Bang(scoreLabel, "-7", "-7");
+        // bang.setVisibility(true);
+
+        this.getScore = ()=> {return scoreVal};
+        this.addScore = (val)=> {
+            scoreVal += parseInt(val);
+            scoreLabel.innerHTML = `Score: ${scoreVal}`;
+        }
+        this.showBang = ()=> {
+            scoreLabel.appendChild(this.bang.html);
+            this.bang.setVisibility(true);
+        }
+        
+        this.onScoreLabelClick = null;
+        scoreLabel.onclick = ()=>{
+            this.bang.setVisibility(false);
+            this.onScoreLabelClick();
+        }
     }
 
     let atts = elem(html);
@@ -203,32 +303,126 @@ export function Card(parent, storyteller, state) {
         padding: 5px 0px 5px 0px;
         background-color: #00ff80;
         border-radius: 0px 0px 10px 10px;`);
+
     let abilitiesCont = elem(atts);
     style(abilitiesCont, `
         display: table-cell;`);
     let aTitle = elem(abilitiesCont);
     aTitle.innerText = "Abilities";
-    this.abilities = [];
+    let abilities = [];
     for (let i = 0; i < 2; i++) {
-        this.abilities.push(new Attribute(
+        abilities.push(new Attribute(
             abilitiesCont,
-            true, 0, storyteller));
+            true, state, storyteller));
         let bla = new Attribute();
-        this.abilities[i].onUpdated = () => {this.onUpdated();};
+        abilities[i].onUpdated = () => {this.onUpdated();};
     }
+    this.abilities = abilities;
 
     let goalsCont = elem(atts);
     style(goalsCont, `
         display: table-cell;`);
     let gTitle = elem(goalsCont);
     gTitle.innerText = "Goals";
-    this.goals = [];
+    let goals = [];
     for (let i = 0; i < 2; i++) {
-        this.goals.push(new Attribute(
+        goals.push(new Attribute(
             goalsCont,
-            false, 0, storyteller));
-        this.goals[i].onUpdated = () => {this.onUpdated();};
+            false, state, storyteller));
+        goals[i].onUpdated = () => {this.onUpdated();};
+    }
+    this.goals = goals;
+
+    if(state === 1) {
+        abilitiesCont.style.width = "50%";
+        goalsCont.style.width = "50%";
+
+        this.onAnySbtnClick = null;
+
+        for(let goal of goals) {
+            goal.onScoreBtnClick = (score, reason)=>{
+                this.onAnySbtnClick(score, reason);
+            }
+        }
     }
 
-    padder(this.wrapper, 5);
+    this.update = (info)=>{
+        name.innerText = info["name"];
+        if(state === 2) {
+            scoreLabel.innerHTML = `Score: ${info['allscore']}`;
+        }
+        for (let i = 0; i < 2; i++) {
+            if (state === 0)
+            {
+                abilities[i].checkbox.checked =
+                    info["abilities"][i]["checked"];
+                abilities[i].textarea.readOnly = 
+                    info["abilities"][i]["checked"];
+                abilities[i].textarea.style.opacity =
+                    info["abilities"][i]["checked"] ? 0.5 : 1; 
+            }
+            
+            abilities[i].textarea.value =
+                info["abilities"][i]["text"];
+            abilities[i].updateTextboxHeight();
+        }
+        for (let i = 0; i < 2; i++) {
+            if (state === 0)
+            {
+                goals[i].checkbox.checked =
+                    info["goals"][i]["checked"];
+                goals[i].textarea.readOnly = 
+                    info["goals"][i]["checked"];
+                goals[i].textarea.style.opacity =
+                    info["goals"][i]["checked"] ? 0.5 : 1; 
+                goals[i].score.value =
+                    info["goals"][i]["score"];
+            }
+            else if (state === 1 || state === 2) {
+                goals[i].setScoreVal(info["goals"][i]["score"]);
+            }
+
+            goals[0].textarea.style.opacity = 1;
+
+            goals[i].textarea.value =
+                info["goals"][i]["text"];
+            goals[i].updateTextboxHeight();
+        }
+    }
+
+    this.getInfo = ()=>{
+        let info = {};
+        info["name"] = name.innerText;
+        if(state === 1)
+            info["allscore"] = scoreVal;
+        info["abilities"] = [];
+        for (let i = 0; i < 2; i++) {
+            info["abilities"].push({});
+                if(state === 0)
+                    info["abilities"][i]["checked"] =
+                        abilities[i].checkbox.checked;
+                info["abilities"][i]["text"] =
+                    abilities[i].textarea.value;
+        }
+        info["goals"] = [];
+        for (let i = 0; i < 2; i++) {
+            info["goals"].push({});
+                if(state === 0) {
+                    info["goals"][i]["checked"] =
+                        goals[i].checkbox.checked;
+                    info["goals"][i]["score"] =
+                        goals[i].score.value;
+                }
+                else if (state === 1) {
+                    info["goals"][i]["score"] =
+                        goals[i].getScoreVal();
+                }
+                info["goals"][i]["text"] =
+                    goals[i].textarea.value;
+        }
+        
+        return info;
+    }
+
+    Padder(this.wrapper, 5);
 }

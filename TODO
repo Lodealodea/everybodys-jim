@@ -1,7 +1,14 @@
-* make the "Start game" the personalities to a new screen
-* make the floaty circle button thingy
-* make a score viewer for the Card
-* make scoring buttons for the Attribute
-* make the scoring buttons open a dialogue box
+* make an end screen
+*make sure the game repeats after finishing
+* make it so the textboxs at the end screen
+    are not writeable
+
+
+* remember to limit the game to have at least two players
+    before starting
+* remember to set it so the storyteller has to
+    approve everything before starting the game
+* remember to set the time of sending info to
+    1000 instead of 0
 
 You're doing great! Just keep going :)

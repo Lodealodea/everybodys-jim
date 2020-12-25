@@ -1,5 +1,5 @@
 import {elem, style} from "./core.js";
-import {container, padder, StyleBtn} from "./addons.js";
+import {Container, Padder, StyleBtn} from "./addons.js";
 import { Card } from "./card.js";
 import { copy } from "./general.js";
 import { storyteller2 } from "./storyteller2.js"; 
@@ -13,20 +13,20 @@ export function storyteller(parent, code, socket) {
         copy(window.location.href + code);
     };
 
-    padder(html, 20);
+    Padder(html, 20);
 
     let tip = elem(html, "p");
     tip.innerText = "Share the room link to invite players";
     style(tip, `font-size: 24px`);
 
-    let box = container(html, "Personalities");
+    let box = Container(html, "Personalities");
     box.style.visibility = "hidden";
     
-    padder(html, 20);
+    Padder(html, 20);
 
     let startBtn = new StyleBtn(html, "Start game");
     startBtn.html.style.visibility = "hidden";
-
+    startBtn.html.disabled = false; //CHANGE TO TRUE
 
 
     let cards = {};
@@ -53,28 +53,7 @@ export function storyteller(parent, code, socket) {
         cards[sender].onUpdated = ()=>{
             clearTimeout(timeoutFunc);
             timeoutFunc = setTimeout(()=>{
-                let info = {};
-                info["name"] = cards[sender].name.innerText;
-                info["abilities"] = [];
-                for (let i = 0; i < 2; i++) {
-                    info["abilities"].push({});
-                    info["abilities"][i]["checked"] =
-                        cards[sender].abilities[i].checkbox.checked;
-                    info["abilities"][i]["text"] =
-                        cards[sender].abilities[i].textarea.value;
-                }
-                info["goals"] = [];
-                for (let i = 0; i < 2; i++) {
-                    info["goals"].push({});
-                    info["goals"][i]["checked"] =
-                        cards[sender].goals[i].checkbox.checked;
-                    info["goals"][i]["score"] =
-                        cards[sender].goals[i].score.value;
-                    info["goals"][i]["text"] =
-                        cards[sender].goals[i].textarea.value;
-                }
-
-                socket.emit("update card back", info, sender);
+                socket.emit("update card back", cards[sender].getInfo(), sender);
             }, /*1000*/0);
 
             updateStartBtn();
@@ -83,21 +62,11 @@ export function storyteller(parent, code, socket) {
 
     socket.on("update card", (info, sender)=>{
         if (!Object.keys(cards).includes(sender)) {
-            cards[sender] = new Card(box, true);
+            cards[sender] = new Card(box, true, 0);
             setOnUpdated(sender);
         } 
         if (info["name"] != "") {
-            cards[sender].name.innerText = info["name"];
-            for (let i = 0; i < 2; i++) {
-                cards[sender].abilities[i].textarea.value =
-                    info["abilities"][i];
-                cards[sender].abilities[i].updateTextboxHeight();
-            }
-            for (let i = 0; i < 2; i++) {
-                cards[sender].goals[i].textarea.value =
-                    info["goals"][i];
-                cards[sender].goals[i].updateTextboxHeight();
-            }
+            cards[sender].update(info);
         }
         else {
             removeCard(sender);
@@ -124,6 +93,11 @@ export function storyteller(parent, code, socket) {
     startBtn.html.onclick = ()=>{
         html.remove();
         socket.emit("personality2");
-        storyteller2(parent, socket);
+        storyteller2(parent, socket, (()=>{
+            let rtn = [];
+            for(let [key, card] of Object.entries(cards))
+                rtn.push({key, inner: card.getInfo()});
+            return rtn;
+        })(), code);
     };
 }
