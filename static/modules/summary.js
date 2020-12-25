@@ -37,7 +37,7 @@ export function summary(parent, cardsInfo, winnerKeys, isSt = false, code = "") 
 
         newGameBtn.html.onclick = ()=>{
             html.remove();
-            storyteller(parent, code, socket);
+            storyteller(parent, code, socket)
         };
     }
 }
