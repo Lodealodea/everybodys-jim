@@ -10,7 +10,7 @@ app.get("/:code", (req, res) => {
     res.sendFile(__dirname + "/static/index.html");
 });
 
-http.listen(process.env.port || 3000, () => {
+http.listen(process.env.PORT || 3000, () => {
     console.log("listening on *:3000");
 });
 
